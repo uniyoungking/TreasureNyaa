@@ -1,0 +1,191 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4342584471223258003
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4342584471223258001}
+  - component: {fileID: 4342584471223258002}
+  - component: {fileID: 4342584471223258000}
+  m_Layer: 0
+  m_Name: PlatformGenerator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4342584471223258001
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4342584471223258003}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4342584471457828240}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4342584471223258002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4342584471223258003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec6a66fde4afbb147a2177d19a80b8ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  poolList:
+  - parentTr: {fileID: 0}
+    poolPrefab: {fileID: 7138058223530750057, guid: 505a966c29044e94aac94d346103c0b9,
+      type: 3}
+    createName: NormalBlockA
+    poolSize: 50
+  - parentTr: {fileID: 0}
+    poolPrefab: {fileID: 2770162608302949772, guid: 4656ef7493de44744aaa6515b644fc5f,
+      type: 3}
+    createName: NormalBlockB
+    poolSize: 50
+  - parentTr: {fileID: 0}
+    poolPrefab: {fileID: 591775543352163282, guid: 9360b985b72cd88488afedcb331ea0c8,
+      type: 3}
+    createName: NormalBlockC
+    poolSize: 50
+  activatedObjects: []
+--- !u!114 &4342584471223258000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4342584471223258003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2f966113bcb0b14ca42652c52f8a6db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemGenerator: {fileID: 0}
+--- !u!1 &4342584471457828241
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4342584471457828240}
+  m_Layer: 0
+  m_Name: Generators
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4342584471457828240
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4342584471457828241}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 4342584471223258001}
+  - {fileID: 4668849659626119473}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4668849659626119476
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4668849659626119473}
+  - component: {fileID: 4668849659626119478}
+  - component: {fileID: 4668849659626119479}
+  m_Layer: 0
+  m_Name: ItemGenerator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4668849659626119473
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4668849659626119476}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4342584471457828240}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4668849659626119478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4668849659626119476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec6a66fde4afbb147a2177d19a80b8ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  poolList:
+  - parentTr: {fileID: 0}
+    poolPrefab: {fileID: 1772905255619818791, guid: 58a61f76c043c5640860a8a941298f59,
+      type: 3}
+    createName: Coin
+    poolSize: 20
+  - parentTr: {fileID: 0}
+    poolPrefab: {fileID: 1228883186460664494, guid: 7687a191c4858d44781c784cde6d9fbe,
+      type: 3}
+    createName: Gift
+    poolSize: 20
+  - parentTr: {fileID: 0}
+    poolPrefab: {fileID: 7575467006705784846, guid: 2f6d36c2f2f83f14cae0bfd569c66d81,
+      type: 3}
+    createName: FireFairy
+    poolSize: 20
+  - parentTr: {fileID: 0}
+    poolPrefab: {fileID: 1175172351051474426, guid: 323fae623389a174293286d0f8b842f6,
+      type: 3}
+    createName: TreeFairy
+    poolSize: 20
+  - parentTr: {fileID: 0}
+    poolPrefab: {fileID: 1175172351051474426, guid: eb8285c6cbe1c624b99399e5dc6eea9f,
+      type: 3}
+    createName: TreeFairy_Air
+    poolSize: 20
+  activatedObjects: []
+--- !u!114 &4668849659626119479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4668849659626119476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c47fa58256ade404581345b537693cb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
