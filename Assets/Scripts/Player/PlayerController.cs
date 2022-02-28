@@ -79,6 +79,8 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        playerHp -= Time.deltaTime;
+
         if (playerHp > 200)
             playerHp = 200;
 

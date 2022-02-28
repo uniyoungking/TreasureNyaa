@@ -163,7 +163,7 @@ public class ItemGenerator : MonoBehaviour
 
         else if (item.MyItemType == ItemType.TreeFairy2) // 영학 : 일단 발판 간격이 2f라서 가능한 코드. 발판 간격이 좀더 유연하게 수정될 시 수정해야할 부분.
         {
-            float ranX = UnityEngine.Random.Range(-7f, 7f);
+            float ranX = UnityEngine.Random.Range(-6f, 6f);
 
             position.x += ranX;
             position.y += 1;

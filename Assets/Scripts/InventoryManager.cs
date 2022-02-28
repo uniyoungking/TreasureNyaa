@@ -9,6 +9,7 @@ public class InventoryManager : MonoBehaviour
 
     [HideInInspector] public int[] inventory;
     public GameObject[] inventoryButtons;
+    [HideInInspector] public bool[] isWrap;
     [SerializeField] private Sprite sprite_Empty;
 
     private void Awake()
@@ -19,12 +20,16 @@ public class InventoryManager : MonoBehaviour
             Destroy(gameObject);
 
         inventory = new int[4];
+        isWrap = new bool[4];
     }
 
     void Start()
     {
         for (int i = 0; i < 4; i++)
             inventory[i] = -1;
+
+        for (int i = 0; i < 4; i++)
+            isWrap[i] = true;
     }
 
     void Update()
@@ -47,7 +52,7 @@ public class InventoryManager : MonoBehaviour
                 if (inventory[i] < 0)
                 {
                     inventory[i] = itemCode;
-                    inventoryButtons[i].GetComponent<Image>().sprite = UIManager.instance.sprites_Item[itemCode];
+                    inventoryButtons[i].GetComponent<Image>().sprite = UIManager.instance.sprites_Item[7];
                     isFull = false;
                     break;
                 }

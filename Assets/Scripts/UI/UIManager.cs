@@ -15,7 +15,7 @@ public class UIManager : MonoBehaviour
     private float pulse = 0f;
     private int coin = 0;
 
-    private float pulse_Count = 0.5f;
+    private float pulse_Count = 0f;
     private int item_Count = 0;
     private bool enableGetItem = true;
 
@@ -26,9 +26,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject back;
 
     private GameObject window_Current;
-
-    [SerializeField] private TextMeshProUGUI text_Life;
-    [SerializeField] private TextMeshProUGUI text_Stack;
 
     [SerializeField] private TextMeshProUGUI stats_Speed;
     [SerializeField] private TextMeshProUGUI stats_Weight;
@@ -56,6 +53,14 @@ public class UIManager : MonoBehaviour
     private float count_MinigameLimit = 0;
     private int minigameCode; // 0:Pulse, 1:Inventory
 
+    // Pulse
+    [SerializeField] private TextMeshProUGUI text_Hp;
+    [SerializeField] private TextMeshProUGUI text_Stack;
+    [SerializeField] private Image image_Charge;
+    [SerializeField] private Sprite[] sprites_Charge;
+    [SerializeField] private GameObject[] stacks;
+    [SerializeField] private Animator animator;
+
     // Minigame_Pulse
     [SerializeField] private TextMeshProUGUI text_Minigame_Pulse;
     [SerializeField] private Image image_Minigame_Pulse;
@@ -72,7 +77,7 @@ public class UIManager : MonoBehaviour
     private int randomTouch = 0;
     private int countTouch = 0;
     private bool isLimit = false;
-    private float button_Hacking_Position_X;
+    private RectTransform rectTransform_Hacking;
 
     private bool switch_Blink = false;
 
@@ -90,7 +95,10 @@ public class UIManager : MonoBehaviour
     {
         window_Current = window_Home;
         exist_button = new List<int>();
-        button_Hacking_Position_X = button_Hacking.transform.position.x;
+        rectTransform_Hacking = button_Hacking.GetComponent<RectTransform>();
+
+        if (CameraSet.moreHeightLong)
+            gameObject.GetComponent<CanvasScaler>().matchWidthOrHeight = 0;
     }
 
     void Update()
@@ -122,8 +130,6 @@ public class UIManager : MonoBehaviour
 
         if (player.isDead)
             button_Restart.SetActive(true);
-
-
 
         // -------Mini game-------
         if ((!active_Minigame) && (!ing_Minigame))
@@ -163,7 +169,7 @@ public class UIManager : MonoBehaviour
 
     private void Pulse()
     {
-        text_Life.text = (int)player.PlayerHp + " / 200";
+        text_Hp.text = "" + (int)player.PlayerHp;
 
         pulse_Count += Time.deltaTime;
 
@@ -174,10 +180,27 @@ public class UIManager : MonoBehaviour
             pulse_Count = 0;
         }
 
+        if (pulse == 1)
+            stacks[0].SetActive(true);
+        if (pulse == 2)
+            stacks[1].SetActive(true);
+        if (pulse == 3)
+            stacks[2].SetActive(true);
+        if (pulse == 4)
+            stacks[3].SetActive(true);
+        if (pulse == 5)
+            stacks[4].SetActive(true);
+
         if (pulse == 6)
         {
             player.PlayerHp += 1f;
             pulse = 0f;
+
+            for (int i = 0; i < 5; i++)
+                stacks[i].SetActive(false);
+
+            animator.SetTrigger("Charge");
+
             text_Stack.text = "" + pulse;
         }
     }
@@ -242,6 +265,9 @@ public class UIManager : MonoBehaviour
         back.SetActive(false);
         currentWindow = 0;
 
+        for (int i = 0; i < 5; i++)
+            stacks[i].SetActive(false);
+
         if (!isSuccess_Minigame_Pulse)
             Fail_Minigame(0);
 
@@ -290,11 +316,19 @@ public class UIManager : MonoBehaviour
 
         if (itemCode != -1)
         {
-            Debug.Log("Item Code : " + itemCode);
-            player.UseItem(itemCode);
+            if (InventoryManager.instance.isWrap[buttonCode])
+            {
+                InventoryManager.instance.isWrap[buttonCode] = false;
+                InventoryManager.instance.inventoryButtons[buttonCode].GetComponent<Image>().sprite = sprites_Item[itemCode];
+            }
+            else
+            {
+                InventoryManager.instance.isWrap[buttonCode] = true;
+                Debug.Log("Item Code : " + itemCode);
+                player.UseItem(itemCode);
+                InventoryManager.instance.RemoveItem(buttonCode);
+            }
         }
-
-        InventoryManager.instance.RemoveItem(buttonCode);
     }
 
     public void Click_Minigame_Pulse_Touch()
@@ -338,6 +372,7 @@ public class UIManager : MonoBehaviour
     {
         player.PlayerHp -= 20f;
         image_Back.sprite = sprite_Back;
+        switch_Blink = false;
 
         if (minigameCode == 0)
         {
@@ -427,8 +462,7 @@ public class UIManager : MonoBehaviour
         image_Inventory.sprite = sprite_Inventory;
         isSuccess_Minigame_Inventory = false;
 
-        button_Hacking.transform.position = new Vector3(button_Hacking_Position_X, button_Hacking.transform.position.y,
-            button_Hacking.transform.position.z);
+        exist_button.Clear();
 
         for (int i = 0; i < 4; i++)
         {
@@ -441,23 +475,19 @@ public class UIManager : MonoBehaviour
         switch (exist_button[random])
         {
             case 0:
-                button_Hacking.transform.position = new Vector3(button_Hacking.transform.position.x - 185f, button_Hacking.transform.position.y,
-            button_Hacking.transform.position.z);
+                rectTransform_Hacking.anchoredPosition = new Vector2(-185f, 11f);
                 break;
 
             case 1:
-                button_Hacking.transform.position = new Vector3(button_Hacking.transform.position.x - 60f, button_Hacking.transform.position.y,
-            button_Hacking.transform.position.z);
+                rectTransform_Hacking.anchoredPosition = new Vector2(-60f, 11f);
                 break;
 
             case 2:
-                button_Hacking.transform.position = new Vector3(button_Hacking.transform.position.x + 65f, button_Hacking.transform.position.y,
-            button_Hacking.transform.position.z);
+                rectTransform_Hacking.anchoredPosition = new Vector2(65f, 11f);
                 break;
 
             case 3:
-                button_Hacking.transform.position = new Vector3(button_Hacking.transform.position.x + 190f, button_Hacking.transform.position.y,
-            button_Hacking.transform.position.z);
+                rectTransform_Hacking.anchoredPosition = new Vector2(190f, 11f);
                 break;
 
             default:
