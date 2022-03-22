@@ -58,6 +58,8 @@ public class CollisionChecker : MonoBehaviour
         int random = Random.Range(0, 7);
 
         InventoryManager.instance.AddItem(random);
+
+        Debug.Log("Add item");
     }
 
     private void HitFireFairy(Item item)

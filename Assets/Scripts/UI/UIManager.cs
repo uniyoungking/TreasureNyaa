@@ -23,6 +23,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject window_Pulse;
     [SerializeField] private GameObject window_Inventory;
     [SerializeField] private GameObject window_Pulse2;
+    [SerializeField] private GameObject window_Inventory2;
     [SerializeField] private GameObject back;
 
     private GameObject window_Current;
@@ -47,10 +48,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Image image_Inventory;
     [SerializeField] private Image image_Back;
 
-    private bool active_Minigame = false;
-    private bool ing_Minigame = false;
-    private float count_Minigame = 0;
-    private float count_MinigameLimit = 0;
+    private bool active_Minigame = false; // state to enable start minigame
+    private bool ing_Minigame = false; // state to playing minigame
+    private float cooltime_Next_Minigame = 0;
+    private float count_Until_MinigameStart = 0;
     private int minigameCode; // 0:Pulse, 1:Inventory
 
     // Pulse
@@ -62,14 +63,18 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Animator animator;
 
     // Minigame_Pulse
-    [SerializeField] private TextMeshProUGUI text_Minigame_Pulse;
     [SerializeField] private Image image_Minigame_Pulse;
+    [SerializeField] private Sprite sprite_Minigame_Pulse_Green;
+    [SerializeField] private Sprite sprite_Minigame_Pulse_Red;
+    [SerializeField] private Image image_Minigame_Pulse_Red;
+    [SerializeField] private Sprite[] sprites_Minigame_Pulse_Red_Count;
     private bool isTouch_Minigame_Pulse = false;
     private bool isSuccess_Minigame_Pulse = true;
 
     // Minigame_Inventory
     [SerializeField] private GameObject button_Hacking;
-    [SerializeField] private TextMeshProUGUI text_Hacking;
+    [SerializeField] private Image image_Minigame_Inventory_Hacking;
+    [SerializeField] private Sprite[] sprites_Minigame_Inventory_Count;
     private List<int> exist_button;
     private bool isSuccess_Minigame_Inventory = true;
     [HideInInspector] public bool isActive_Minigame_Inventory = false;
@@ -78,6 +83,14 @@ public class UIManager : MonoBehaviour
     private int countTouch = 0;
     private bool isLimit = false;
     private RectTransform rectTransform_Hacking;
+
+    // Minigame_Inventory2
+    [SerializeField] private Image image_Answer;
+    [SerializeField] private Image[] images_Example;
+    [SerializeField] private Sprite[] sprites_Minigame_Inventory2;
+    private int[] exampleCodes = new int[3];
+    private int answerCode;
+    private bool isSuccess_Minigame_Inventory2 = true;
 
     private bool switch_Blink = false;
 
@@ -133,22 +146,22 @@ public class UIManager : MonoBehaviour
 
         // -------Mini game-------
         if ((!active_Minigame) && (!ing_Minigame))
-            count_Minigame += Time.deltaTime;
+            cooltime_Next_Minigame += Time.deltaTime;
         else if (active_Minigame && (!ing_Minigame))
-            count_MinigameLimit += Time.deltaTime;
+            count_Until_MinigameStart += Time.deltaTime;
 
-        if (count_Minigame > 10)
+        if (cooltime_Next_Minigame > 10)
         {
             active_Minigame = true;
             minigameCode = Enable_Minigame();
-            count_Minigame = 0;
+            cooltime_Next_Minigame = 0;
         }
 
-        if (count_MinigameLimit > 7)
+        if (count_Until_MinigameStart > 7)
         {
             active_Minigame = false;
             Fail_Minigame(minigameCode);
-            count_MinigameLimit = 0;
+            count_Until_MinigameStart = 0;
         }
 
         if (randomTouch > 0 && (!isLimit))
@@ -164,7 +177,7 @@ public class UIManager : MonoBehaviour
         }
 
         if (Input.GetKeyDown(KeyCode.H))
-            Debug.Log(count_Minigame);
+            Debug.Log(cooltime_Next_Minigame);
     }
 
     private void Pulse()
@@ -214,14 +227,16 @@ public class UIManager : MonoBehaviour
 
         if (active_Minigame && minigameCode == 0)
         {
+            image_Minigame_Pulse.sprite = sprite_Minigame_Pulse_Red;
+            image_Minigame_Pulse_Red.gameObject.SetActive(true);
             window_Pulse2.SetActive(true);
             window_Current = window_Pulse2;
             currentWindow = 3;
 
             active_Minigame = false;
             ing_Minigame = true;
-            count_Minigame = 0;
-            count_MinigameLimit = 0;
+            cooltime_Next_Minigame = 0;
+            count_Until_MinigameStart = 0;
             StartCoroutine(Minigame_Pulse());
         }
         else
@@ -243,14 +258,32 @@ public class UIManager : MonoBehaviour
         {
             active_Minigame = false;
             ing_Minigame = true;
-            count_Minigame = 0;
-            count_MinigameLimit = 0;
-            StartCoroutine(Minigame_Inventory());
-        }
+            cooltime_Next_Minigame = 0;
+            count_Until_MinigameStart = 0;
 
-        window_Inventory.SetActive(true);
-        window_Current = window_Inventory;
-        currentWindow = 2;
+            int random = Random.Range(1, 2);
+
+            if (random == 0)
+            {
+                StartCoroutine(Minigame_Inventory());
+                window_Inventory.SetActive(true);
+                window_Current = window_Inventory;
+                currentWindow = 2;
+            }
+            else
+            {
+                Minigame_Inventory2();
+                window_Inventory2.SetActive(true);
+                window_Current = window_Inventory2;
+                currentWindow = 4;
+            }
+        }
+        else
+        {
+            window_Inventory.SetActive(true);
+            window_Current = window_Inventory;
+            currentWindow = 2;
+        }
 
         back.SetActive(true);
     }
@@ -269,10 +302,22 @@ public class UIManager : MonoBehaviour
             stacks[i].SetActive(false);
 
         if (!isSuccess_Minigame_Pulse)
+        {
+            Debug.Log("Fail minigame pulse");
             Fail_Minigame(0);
+        }
 
         if (!isSuccess_Minigame_Inventory)
+        {
+            Debug.Log("Fail minigame inventory");
             Fail_Minigame(1);
+        }
+
+        if (!isSuccess_Minigame_Inventory2)
+        {
+            Debug.Log("Fail minigame inventory2");
+            Fail_Minigame(2);
+        }
     }
 
     public void Click_RestartButton()
@@ -340,6 +385,25 @@ public class UIManager : MonoBehaviour
         isTouch_Minigame_Inventory = true;
     }
 
+    public void Click_Minigame_Inventory2_Touch(int buttonCode)
+    {
+        if (answerCode == exampleCodes[buttonCode])
+        {
+            isSuccess_Minigame_Inventory2 = true;
+            ing_Minigame = false;
+            isActive_Minigame_Inventory = false;
+            Click_Back();
+            Debug.Log("Success");
+        }
+        else
+        {
+            ing_Minigame = false;
+            isActive_Minigame_Inventory = false;
+            Click_Back();
+            Debug.Log("Fail");
+        }
+    }
+
     private int Enable_Minigame()
     {
         if (currentWindow != 0)
@@ -349,20 +413,27 @@ public class UIManager : MonoBehaviour
             StartCoroutine(Blink_Button_Back());
         }
 
-        int random = Random.Range(0, 2);
+        int random = Random.Range(1, 2); // if you want to certain minigame test, change here(minigame code)
 
         if (random == 0)
+        {
             Enable_Minigame_Pulse();
+            Debug.Log("Enable minigame pulse");
+        }
         else
         {
             if (InventoryManager.instance.inventory[0] == -1 && InventoryManager.instance.inventory[1] == -1 && InventoryManager.instance.inventory[2] == -1
             && InventoryManager.instance.inventory[3] == -1)
             {
                 Enable_Minigame_Pulse();
+                Debug.Log("Enable minigame pulse");
                 random = 0;
             }
             else
+            {
                 Enable_Minigame_Inventory();
+                Debug.Log("Enable minigame inventory");
+            }
         }
 
         return random;
@@ -387,8 +458,7 @@ public class UIManager : MonoBehaviour
             isSuccess_Minigame_Pulse = true;
         }
         else if (minigameCode == 1)
-        {
-            image_Inventory.sprite = sprite_Inventory;
+        {;
             InventoryManager.instance.RemoveItem(3);
             InventoryManager.instance.RemoveItem(2);
             InventoryManager.instance.RemoveItem(1);
@@ -396,6 +466,15 @@ public class UIManager : MonoBehaviour
 
             isLimit = false;
             isSuccess_Minigame_Inventory = true;
+        }
+        else if (minigameCode == 2)
+        {
+            InventoryManager.instance.RemoveItem(3);
+            InventoryManager.instance.RemoveItem(2);
+            InventoryManager.instance.RemoveItem(1);
+            InventoryManager.instance.RemoveItem(0);
+
+            isSuccess_Minigame_Inventory2 = true;
         }
     }
 
@@ -418,11 +497,16 @@ public class UIManager : MonoBehaviour
         int random_Count = Random.Range(5, 8);
         float random_Sec = Random.Range(0.6f, 1.3f);
 
-        image_Minigame_Pulse.color = new Color32(255, 71, 71, 255);
+        image_Minigame_Pulse_Red.sprite = sprites_Minigame_Pulse_Red_Count[random_Count];
 
         while (random_Count > 0)
         {
-            text_Minigame_Pulse.text = "" + random_Count;
+            if (isTouch_Minigame_Pulse) // Fail be caused by wrong touch
+            {
+                isTouch_Minigame_Pulse = false;
+                ing_Minigame = false;
+                Click_Back();
+            }
 
             yield return new WaitForSeconds(random_Sec);
 
@@ -432,11 +516,13 @@ public class UIManager : MonoBehaviour
                 yield break;
             }
 
-            random_Count -= 1;
+            random_Count--;
+
+            image_Minigame_Pulse_Red.sprite = sprites_Minigame_Pulse_Red_Count[random_Count];
         }
 
-        text_Minigame_Pulse.text = "touch";
-        image_Minigame_Pulse.color = new Color32(77, 219, 100, 255);
+        image_Minigame_Pulse_Red.gameObject.SetActive(false);
+        image_Minigame_Pulse.sprite = sprite_Minigame_Pulse_Green;
 
         yield return new WaitForSeconds(random_Sec);
 
@@ -446,14 +532,19 @@ public class UIManager : MonoBehaviour
             yield break;
         }
 
-        if (isTouch_Minigame_Pulse)
+        if (isTouch_Minigame_Pulse) // success minigame
         {
             isTouch_Minigame_Pulse = false;
             ing_Minigame = false;
+            Debug.Log("Success minigame pulse");
+
+            window_Home.SetActive(true);
+            window_Pulse2.SetActive(false);
+            currentWindow = 0;
             yield break;
         }
 
-        ing_Minigame = false;
+        ing_Minigame = false; // Fail be caused by no any touch
         Click_Back();
     }
 
@@ -475,19 +566,19 @@ public class UIManager : MonoBehaviour
         switch (exist_button[random])
         {
             case 0:
-                rectTransform_Hacking.anchoredPosition = new Vector2(-185f, 11f);
+                rectTransform_Hacking.anchoredPosition = new Vector2(-159f, 11f);
                 break;
 
             case 1:
-                rectTransform_Hacking.anchoredPosition = new Vector2(-60f, 11f);
+                rectTransform_Hacking.anchoredPosition = new Vector2(-34f, 11f);
                 break;
 
             case 2:
-                rectTransform_Hacking.anchoredPosition = new Vector2(65f, 11f);
+                rectTransform_Hacking.anchoredPosition = new Vector2(91f, 11f);
                 break;
 
             case 3:
-                rectTransform_Hacking.anchoredPosition = new Vector2(190f, 11f);
+                rectTransform_Hacking.anchoredPosition = new Vector2(216f, 11f);
                 break;
 
             default:
@@ -499,9 +590,9 @@ public class UIManager : MonoBehaviour
         randomTouch = Random.Range(5, 8);
         countTouch = 0;
 
-        text_Hacking.text = "" + randomTouch;
+        image_Minigame_Inventory_Hacking.sprite = sprites_Minigame_Inventory_Count[randomTouch];
 
-        yield return new WaitForSeconds((float)randomTouch);
+        yield return new WaitForSeconds(randomTouch);
 
         if (!isSuccess_Minigame_Inventory)
         {
@@ -532,6 +623,45 @@ public class UIManager : MonoBehaviour
         ing_Minigame = false;
         isActive_Minigame_Inventory = false;
         Click_Back();
+    }
+
+    private void Minigame_Inventory2()
+    {
+        image_Inventory.sprite = sprite_Inventory;
+        isSuccess_Minigame_Inventory2 = false;
+
+        int random = Random.Range(0, 9); // Examples
+        images_Example[0].sprite = sprites_Minigame_Inventory2[random];
+        exampleCodes[0] = random;
+
+        random = Random.Range(0, 9);
+        while (random == exampleCodes[0])
+            random = Random.Range(0, 9);
+        images_Example[1].sprite = sprites_Minigame_Inventory2[random];
+        exampleCodes[1] = random;
+
+        random = Random.Range(0, 9);
+        while (random == exampleCodes[0] || random == exampleCodes[1])
+            random = Random.Range(0, 9);
+        images_Example[2].sprite = sprites_Minigame_Inventory2[random];
+        exampleCodes[2] = random;
+
+        random = Random.Range(0, 3); // Answer
+        if (random == 0)
+        {
+            image_Answer.sprite = images_Example[0].sprite;
+            answerCode = exampleCodes[0];
+        }
+        else if (random == 1)
+        {
+            image_Answer.sprite = images_Example[1].sprite;
+            answerCode = exampleCodes[1];
+        }
+        else if (random == 2)
+        {
+            image_Answer.sprite = images_Example[2].sprite;
+            answerCode = exampleCodes[2];
+        } 
     }
 
     private IEnumerator Blink_Button_Back()
