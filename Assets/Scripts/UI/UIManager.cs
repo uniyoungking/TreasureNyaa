@@ -94,6 +94,16 @@ public class UIManager : MonoBehaviour
 
     private bool switch_Blink = false;
 
+    // above : play ui field
+
+    [SerializeField] private GameObject go_UI_Play;
+    [SerializeField] private GameObject go_UI_Main;
+
+    // below : main ui field
+
+    [SerializeField] private GameObject go_screenA;
+    [SerializeField] private GameObject go_screenB;
+
     private void Awake()
     {
         if (instance == null)
@@ -676,5 +686,20 @@ public class UIManager : MonoBehaviour
 
         if (!switch_Blink)
             image_Back.color = new Color32(255, 255, 255, 255);
+    }
+
+    // above : play ui method
+    // below : main ui method
+
+    public void Click_ScreenA_GameStart()
+    {
+        go_screenA.SetActive(false);
+        go_screenB.SetActive(true);
+    }
+
+    public void Click_ScreenB_GameStart()
+    {
+        go_UI_Main.SetActive(false);
+        go_UI_Play.SetActive(true);
     }
 }
