@@ -103,6 +103,9 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private GameObject go_screenA;
     [SerializeField] private GameObject go_screenB;
+    [SerializeField] private GameObject go_screenC;
+    [SerializeField] private GameObject go_screenD;
+    [SerializeField] private GameObject go_screenE;
 
     private void Awake()
     {
@@ -271,7 +274,7 @@ public class UIManager : MonoBehaviour
             cooltime_Next_Minigame = 0;
             count_Until_MinigameStart = 0;
 
-            int random = Random.Range(1, 2);
+            int random = Random.Range(0, 2);
 
             if (random == 0)
             {
@@ -699,7 +702,37 @@ public class UIManager : MonoBehaviour
 
     public void Click_ScreenB_GameStart()
     {
+        go_screenE.SetActive(true);
+    }
+
+    public void Click_ScreenE_GameStart()
+    {
         go_UI_Main.SetActive(false);
         go_UI_Play.SetActive(true);
+    }
+
+    public void Click_Museum()
+    {
+        go_screenD.SetActive(true);
+    }
+
+    public void Click_Cancel_Museum()
+    {
+        go_screenD.SetActive(false);
+    }
+
+    public void Click_Option()
+    {
+        go_screenC.SetActive(true);
+    }
+
+    public void Click_Cancel_Option()
+    {
+        go_screenC.SetActive(false);
+    }
+
+    public void Click_Cancel_SelectMap()
+    {
+        go_screenE.SetActive(false);
     }
 }
